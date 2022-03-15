@@ -9,7 +9,7 @@ type Booler interface {
 	Bool() bool
 }
 
-func ToBool(i interface{}, subs ...interface{}) bool {
+func ToBool(i interface{}, subs ...bool) bool {
 
 	valueElement := ToElemReflectValue(i)
 	valueTypeKind := valueElement.Kind()
@@ -39,20 +39,7 @@ func ToBool(i interface{}, subs ...interface{}) bool {
 	}
 
 	if valueTypeKind == reflect.String {
-		str := valueElement.String()
-
-		if len(subs) > 0 {
-			if ToBool(subs[0]) {
-				if str == "" || str == "0" || strings.ToLower(str) == "false" {
-					return false
-				}
-				return true
-			}
-		}
-
-		if str != "" {
-			return true
-		}
+		return stringToBool(valueElement.String(), subs...)
 	}
 
 	if valueTypeKind == reflect.Slice {
@@ -66,4 +53,12 @@ func ToBool(i interface{}, subs ...interface{}) bool {
 	}
 
 	return false
+}
+
+func stringToBool(str string, subs ...bool) bool {
+	if len(subs) == 0 || !subs[0] {
+		return str != ""
+	}
+
+	return str != "" && str != "0" && strings.ToLower(str) != "false"
 }
