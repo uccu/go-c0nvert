@@ -2,7 +2,6 @@ package c0nvert
 
 import (
 	"reflect"
-	"strconv"
 )
 
 type Floater interface {
@@ -45,24 +44,6 @@ func ToFloat(i interface{}, subs ...int) float64 {
 		return RoundedFixed(valueElement.Float(), subs...)
 	}
 
-	if valueTypeKind == reflect.String {
-		v, _ := strconv.ParseFloat(valueElement.String(), 64)
-		return RoundedFixed(v, subs...)
-	}
+	return RoundedFixed(sliceToFloat(valueElement), subs...)
 
-	if valueTypeKind == reflect.Slice {
-
-		if e, ok := valueElement.Interface().([]byte); ok {
-			v, _ := strconv.ParseFloat(string(e), 64)
-			return RoundedFixed(v, subs...)
-		}
-
-		if e, ok := valueElement.Interface().([]rune); ok {
-			v, _ := strconv.ParseFloat(string(e), 64)
-			return RoundedFixed(v, subs...)
-		}
-
-	}
-
-	return 0
 }

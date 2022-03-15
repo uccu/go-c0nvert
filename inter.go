@@ -2,7 +2,6 @@ package c0nvert
 
 import (
 	"reflect"
-	"strconv"
 )
 
 type Inter interface {
@@ -57,24 +56,6 @@ func ToInt64(i interface{}) int64 {
 		return int64(valueElement.Float())
 	}
 
-	if valueTypeKind == reflect.String {
-		v, _ := strconv.ParseFloat(valueElement.String(), 64)
-		return int64(v)
-	}
+	return int64(sliceToFloat(valueElement))
 
-	if valueTypeKind == reflect.Slice {
-
-		if e, ok := valueElement.Interface().([]byte); ok {
-			v, _ := strconv.ParseFloat(string(e), 64)
-			return int64(v)
-		}
-
-		if e, ok := valueElement.Interface().([]rune); ok {
-			v, _ := strconv.ParseFloat(string(e), 64)
-			return int64(v)
-		}
-
-	}
-
-	return 0
 }
