@@ -8,54 +8,36 @@ type Inter interface {
 	Int() int64
 }
 
-func ToInt(i interface{}) int {
-	return int(ToInt64(i))
-}
+func toInt[T any](src interface{}) interface{} {
 
-func ToInt8(i interface{}) int8 {
-	return int8(ToInt64(i))
-}
+	srcVal := reflect.ValueOf(src)
 
-func ToInt16(i interface{}) int16 {
-	return int16(ToInt64(i))
-}
-
-func ToInt32(i interface{}) int32 {
-	return int32(ToInt64(i))
-}
-
-func ToInt64(i interface{}) int64 {
-
-	valueElement := ToElemReflectValue(i)
-	valueTypeKind := valueElement.Kind()
-
-	if valueTypeKind == reflect.Invalid || !valueElement.CanInterface() {
-		return 0
+	if e, ok := src.(Inter); ok {
+		srcVal = reflect.ValueOf(e.Int())
 	}
 
-	if e, ok := valueElement.Interface().(Inter); ok {
-		return e.Int()
+	if isByteString(srcVal.Type()) {
+		srcVal = reflect.ValueOf(toFloat[float64](ByteStringToString(src)))
 	}
 
-	if valueTypeKind == reflect.Bool {
-		if valueElement.Bool() {
-			return 1
+	if srcVal.Kind() == reflect.Bool {
+		if srcVal.Bool() {
+			srcVal = reflect.ValueOf(1)
+		} else {
+			srcVal = reflect.ValueOf(0)
 		}
-		return 0
 	}
 
-	if valueTypeKind <= reflect.Int64 {
-		return valueElement.Int()
+	if srcVal.Kind() == reflect.String {
+		srcVal = reflect.ValueOf(toFloat[float64](src))
 	}
 
-	if valueTypeKind <= reflect.Uintptr {
-		return int64(valueElement.Uint())
+	dstVal := reflect.ValueOf(new(T)).Elem()
+	dstType := dstVal.Type()
+
+	if srcVal.CanConvert(dstType) {
+		return srcVal.Convert(dstType).Interface().(T)
 	}
 
-	if valueTypeKind <= reflect.Float64 {
-		return int64(valueElement.Float())
-	}
-
-	return int64(sliceToFloat(valueElement))
-
+	return dstVal.Interface().(T)
 }

@@ -14,51 +14,51 @@ func (TestBooler) Bool() bool {
 }
 
 func TestInvalidToBool(t *testing.T) {
-	assert.Equal(t, ToBool(nil), false)
+	assert.Equal(t, To[bool](nil), false)
 }
 
 func TestInterToBool(t *testing.T) {
-	assert.Equal(t, ToBool(TestBooler{}), true)
+	assert.Equal(t, To[bool](TestBooler{}), true)
 }
 
 func TestBoolToBool(t *testing.T) {
-	assert.Equal(t, ToBool(true), true)
-	assert.Equal(t, ToBool(false), false)
+	assert.Equal(t, To[bool](true), true)
+	assert.Equal(t, To[bool](false), false)
 }
 
 func TestIntToBool(t *testing.T) {
-	assert.Equal(t, ToBool(1), true)
-	assert.Equal(t, ToBool(0), false)
-	assert.Equal(t, ToBool(-1), true)
+	assert.Equal(t, To[bool](1), true)
+	assert.Equal(t, To[bool](0), false)
+	assert.Equal(t, To[bool](-1), true)
 }
 
 func TestUintToBool(t *testing.T) {
-	assert.Equal(t, ToBool(uint(1)), true)
-	assert.Equal(t, ToBool(uint(0)), false)
+	assert.Equal(t, To[bool](uint(1)), true)
+	assert.Equal(t, To[bool](uint(0)), false)
 }
 
 func TestFloatToBool(t *testing.T) {
-	assert.Equal(t, ToBool(float64(0)), false)
-	assert.Equal(t, ToBool(float64(0.1)), true)
-	assert.Equal(t, ToBool(float64(0.000000000000001)), true)
+	assert.Equal(t, To[bool](float64(0)), false)
+	assert.Equal(t, To[bool](float64(0.1)), true)
+	assert.Equal(t, To[bool](float64(0.000000000000001)), true)
 }
 
 func TestStringToBool(t *testing.T) {
-	assert.Equal(t, ToBool("", true), false)
-	assert.Equal(t, ToBool("0", true), false)
-	assert.Equal(t, ToBool("false", true), false)
-	assert.Equal(t, ToBool("False", true), false)
-	assert.Equal(t, ToBool("1", true), true)
-	assert.Equal(t, ToBool(""), false)
-	assert.Equal(t, ToBool("0"), true)
+	assert.Equal(t, To[bool]("", true), false)
+	assert.Equal(t, To[bool]("0", true), false)
+	assert.Equal(t, To[bool]("false", true), false)
+	assert.Equal(t, To[bool]("False", true), false)
+	assert.Equal(t, To[bool]("1", true), true)
+	assert.Equal(t, To[bool](""), false)
+	assert.Equal(t, To[bool]("0"), true)
 }
 
 func TestSliceToBool(t *testing.T) {
-	assert.Equal(t, ToBool([]byte("x2")), true)
-	assert.Equal(t, ToBool([]int32("xx")), true)
-	assert.Equal(t, ToBool([]int32("false"), true), false)
+	assert.Equal(t, To[bool]([]byte("x2")), true)
+	assert.Equal(t, To[bool]([]int32("xx")), true)
+	assert.Equal(t, To[bool]([]int32("false"), true), false)
 }
 
 func TestOtherToBool(t *testing.T) {
-	assert.Equal(t, ToBool([]int{}), false)
+	assert.Equal(t, To[bool]([]int(nil)), false)
 }

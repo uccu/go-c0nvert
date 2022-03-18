@@ -1,11 +1,10 @@
 package c0nvert
 
 import (
-	"strconv"
 	"strings"
 )
 
-func ToSliceString(i string, subs ...string) []string {
+func splitToSliceString(i string, subs ...string) []string {
 
 	if i == "" {
 		return []string{}
@@ -28,26 +27,12 @@ func ToSliceString(i string, subs ...string) []string {
 
 }
 
-func ToSliceInt64(i string, subs ...string) []int64 {
+func Split[List []T, T any](i string, subs ...string) List {
+	stringSlice := splitToSliceString(i, subs...)
+	slice := make([]T, len(stringSlice))
 
-	stringSlice := ToSliceString(i, subs...)
-	intSlice := make([]int64, len(stringSlice))
-
-	for k, v := range stringSlice {
-		intSlice[k], _ = strconv.ParseInt(v, 10, 64)
+	for k := range stringSlice {
+		slice[k] = To[T](stringSlice[k])
 	}
-
-	return intSlice
-}
-
-func ToSliceInt(i string, subs ...string) []int {
-
-	stringSlice := ToSliceString(i, subs...)
-	intSlice := make([]int, len(stringSlice))
-
-	for k, v := range stringSlice {
-		intSlice[k], _ = strconv.Atoi(v)
-	}
-
-	return intSlice
+	return slice
 }

@@ -3,23 +3,7 @@ package c0nvert
 import (
 	"math"
 	"reflect"
-	"strconv"
 )
-
-func ToElemReflectValue(v interface{}) reflect.Value {
-
-	e, isReflectValue := v.(reflect.Value)
-
-	if !isReflectValue {
-		return ToElemReflectValue(reflect.ValueOf(v))
-	}
-
-	if e.Kind() == reflect.Ptr || e.Kind() == reflect.Interface {
-		return ToElemReflectValue(e.Elem())
-	}
-
-	return e
-}
 
 func RoundedFixed(val float64, ns ...int) float64 {
 	if len(ns) == 0 {
@@ -31,25 +15,22 @@ func RoundedFixed(val float64, ns ...int) float64 {
 	return math.Floor(fv*shift+.5) / shift
 }
 
-func sliceToFloat(valueElement reflect.Value) float64 {
+func isByteString(t reflect.Type) bool {
+	if t.Kind() == reflect.Slice {
+		return t.Elem().Kind() == reflect.Int32 || t.Elem().Kind() == reflect.Uint8
+	}
+	return false
+}
 
-	if valueElement.Kind() == reflect.String {
-		v, _ := strconv.ParseFloat(valueElement.String(), 64)
-		return v
+func ByteStringToString(i interface{}) string {
+
+	if e, ok := i.([]byte); ok {
+		return string(e)
 	}
 
-	if valueElement.Kind() == reflect.Slice {
-
-		if e, ok := valueElement.Interface().([]byte); ok {
-			v, _ := strconv.ParseFloat(string(e), 64)
-			return v
-		}
-
-		if e, ok := valueElement.Interface().([]rune); ok {
-			v, _ := strconv.ParseFloat(string(e), 64)
-			return v
-		}
+	if e, ok := i.([]rune); ok {
+		return string(e)
 	}
 
-	return 0
+	return ""
 }

@@ -9,54 +9,28 @@ type Booler interface {
 	Bool() bool
 }
 
-func ToBool(i interface{}, subs ...bool) bool {
+func toBool(src interface{}, fuzzy ...bool) interface{} {
 
-	valueElement := ToElemReflectValue(i)
-	valueTypeKind := valueElement.Kind()
+	srcVal := reflect.ValueOf(src)
+	srcType := srcVal.Type()
 
-	if valueTypeKind == reflect.Invalid || !valueElement.CanInterface() {
-		return false
-	}
-
-	if e, ok := valueElement.Interface().(Booler); ok {
+	if e, ok := srcVal.Interface().(Booler); ok {
 		return e.Bool()
 	}
 
-	if valueTypeKind == reflect.Bool {
-		return valueElement.Bool()
-	}
+	if srcType.Kind() != reflect.String {
 
-	if valueTypeKind <= reflect.Int64 {
-		return valueElement.Int() != 0
-	}
-
-	if valueTypeKind <= reflect.Uintptr {
-		return valueElement.Uint() != 0
-	}
-
-	if valueTypeKind <= reflect.Float64 {
-		return valueElement.Float() != 0
-	}
-
-	if valueTypeKind == reflect.String {
-		return stringToBool(valueElement.String(), subs...)
-	}
-
-	if valueTypeKind == reflect.Slice {
-		if e, ok := valueElement.Interface().([]byte); ok {
-			return ToBool(string(e), subs...)
+		if srcType.Kind() != reflect.Slice || (srcType.Elem().Kind() != reflect.Uint8 && srcType.Elem().Kind() != reflect.Int32) {
+			return !srcVal.IsZero()
 		}
 
-		if e, ok := valueElement.Interface().([]rune); ok {
-			return ToBool(string(e), subs...)
-		}
+		strType := reflect.TypeOf(new(string)).Elem()
+		srcVal = srcVal.Convert(strType)
+
 	}
 
-	return false
-}
-
-func stringToBool(str string, subs ...bool) bool {
-	if len(subs) == 0 || !subs[0] {
+	str := srcVal.String()
+	if len(fuzzy) == 0 || !fuzzy[0] {
 		return str != ""
 	}
 

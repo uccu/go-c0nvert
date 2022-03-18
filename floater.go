@@ -2,48 +2,49 @@ package c0nvert
 
 import (
 	"reflect"
+	"strconv"
 )
 
 type Floater interface {
 	Float() float64
 }
 
-func ToFloat32(i interface{}) float32 {
-	return float32(ToFloat(i))
-}
+func toFloat[T any](src interface{}, ns ...int) interface{} {
 
-func ToFloat(i interface{}, subs ...int) float64 {
+	srcVal := reflect.ValueOf(src)
 
-	valueElement := ToElemReflectValue(i)
-	valueTypeKind := valueElement.Kind()
-
-	if valueTypeKind == reflect.Invalid || !valueElement.CanInterface() {
-		return 0
+	if e, ok := src.(Floater); ok {
+		srcVal = reflect.ValueOf(e.Float())
 	}
 
-	if e, ok := valueElement.Interface().(Floater); ok {
-		return RoundedFixed(e.Float(), subs...)
+	if isByteString(srcVal.Type()) {
+		srcVal = reflect.ValueOf(toFloat[float64](ByteStringToString(src)))
 	}
 
-	if valueTypeKind == reflect.Bool {
-		if valueElement.Bool() {
-			return 1
+	if srcVal.Kind() == reflect.Bool {
+		if srcVal.Bool() {
+			srcVal = reflect.ValueOf(1)
+		} else {
+			srcVal = reflect.ValueOf(0)
 		}
-		return 0
 	}
 
-	if valueTypeKind <= reflect.Int64 {
-		return float64(valueElement.Int())
+	if srcVal.Kind() == reflect.String {
+		v, _ := strconv.ParseFloat(srcVal.String(), 64)
+		srcVal = reflect.ValueOf(v)
 	}
 
-	if valueTypeKind <= reflect.Uintptr {
-		return float64(valueElement.Uint())
+	dstVal := reflect.ValueOf(new(T)).Elem()
+	dstType := dstVal.Type()
+
+	if srcVal.CanConvert(dstType) {
+		srcVal = srcVal.Convert(dstType)
+		val := RoundedFixed(srcVal.Float(), ns...)
+		if dstType.Kind() == reflect.Float32 {
+			return float32(val)
+		}
+		return val
 	}
 
-	if valueTypeKind <= reflect.Float64 {
-		return RoundedFixed(valueElement.Float(), subs...)
-	}
-
-	return RoundedFixed(sliceToFloat(valueElement), subs...)
-
+	return 0.0
 }
