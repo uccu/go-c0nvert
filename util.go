@@ -22,7 +22,7 @@ func isByteString(t reflect.Type) bool {
 	return false
 }
 
-func ByteStringToString(i interface{}) string {
+func ByteStringToString(i any) string {
 
 	if e, ok := i.([]byte); ok {
 		return string(e)

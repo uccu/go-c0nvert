@@ -9,7 +9,7 @@ type Floater interface {
 	Float() float64
 }
 
-func toFloat[T any](src interface{}, ns ...int) interface{} {
+func toFloat[T any](src any, ns ...int) any {
 
 	srcVal := reflect.ValueOf(src)
 

@@ -9,28 +9,30 @@ type Booler interface {
 	Bool() bool
 }
 
-func toBool(src interface{}, fuzzy ...bool) interface{} {
+func toBool(src any, fuzzy ...bool) any {
 
 	srcVal := reflect.ValueOf(src)
-	srcType := srcVal.Type()
+	isfuzzy := true
+	if len(fuzzy) == 0 || !fuzzy[0] {
+		isfuzzy = false
+	}
 
 	if e, ok := srcVal.Interface().(Booler); ok {
 		return e.Bool()
 	}
 
-	if srcType.Kind() != reflect.String {
+	if srcVal.Kind() != reflect.String {
 
-		if srcType.Kind() != reflect.Slice || (srcType.Elem().Kind() != reflect.Uint8 && srcType.Elem().Kind() != reflect.Int32) {
+		if !isfuzzy || !isByteString(srcVal.Type()) {
 			return !srcVal.IsZero()
 		}
 
 		strType := reflect.TypeOf(new(string)).Elem()
 		srcVal = srcVal.Convert(strType)
-
 	}
 
 	str := srcVal.String()
-	if len(fuzzy) == 0 || !fuzzy[0] {
+	if !isfuzzy {
 		return str != ""
 	}
 

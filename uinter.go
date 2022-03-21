@@ -8,7 +8,7 @@ type Uinter interface {
 	Uint() uint64
 }
 
-func toUint[T any](src interface{}) interface{} {
+func toUint[T any](src any) any {
 
 	srcVal := reflect.ValueOf(src)
 

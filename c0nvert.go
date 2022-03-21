@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-func ToSlice[List []T, T any](src interface{}, subs ...interface{}) List {
+func ToSlice[List []T, T any](src any, subs ...any) List {
 
 	dst := make(List, 0)
 
@@ -20,7 +20,7 @@ func ToSlice[List []T, T any](src interface{}, subs ...interface{}) List {
 	return dst
 }
 
-func To[T any](src interface{}, subs ...interface{}) T {
+func To[T any](src any, subs ...any) T {
 
 	dst := new(T)
 	dstVal := reflect.ValueOf(dst).Elem()
@@ -30,7 +30,7 @@ func To[T any](src interface{}, subs ...interface{}) T {
 		return dstVal.Interface().(T)
 	}
 
-	switch interface{}(*new(T)).(type) {
+	switch any(*new(T)).(type) {
 	case bool:
 		*dst = toBool(src, ToSlice[[]bool](subs)...).(T)
 	case int, int8, int16, int32, int64:

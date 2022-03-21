@@ -11,7 +11,7 @@ type Stringer interface {
 	String() string
 }
 
-func toString(src interface{}, subs ...interface{}) interface{} {
+func toString(src any, subs ...any) any {
 
 	srcVal := reflect.ValueOf(src)
 
@@ -63,7 +63,7 @@ func toString(src interface{}, subs ...interface{}) interface{} {
 
 }
 
-func sliceToString(valueElement reflect.Value, subs ...interface{}) string {
+func sliceToString(valueElement reflect.Value, subs ...any) string {
 
 	sli := []string{}
 	sub := ","

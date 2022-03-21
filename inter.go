@@ -8,7 +8,7 @@ type Inter interface {
 	Int() int64
 }
 
-func toInt[T any](src interface{}) interface{} {
+func toInt[T any](src any) any {
 
 	srcVal := reflect.ValueOf(src)
 

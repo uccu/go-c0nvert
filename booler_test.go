@@ -57,6 +57,10 @@ func TestSliceToBool(t *testing.T) {
 	assert.Equal(t, To[bool]([]byte("x2")), true)
 	assert.Equal(t, To[bool]([]int32("xx")), true)
 	assert.Equal(t, To[bool]([]int32("false"), true), false)
+	assert.Equal(t, To[bool]([]int32(nil), true), false)
+	assert.Equal(t, To[bool]([]int32("false")), true)
+	assert.Equal(t, To[bool]([]int32("")), true)
+	assert.Equal(t, To[bool]([]int32(nil)), false)
 }
 
 func TestOtherToBool(t *testing.T) {

@@ -1,6 +1,8 @@
 package c0nvert_test
 
 import (
+	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,5 +26,16 @@ func TestOtherToStruct(t *testing.T) {
 }
 func TestByteStringToString(t *testing.T) {
 	assert.Equal(t, ByteStringToString([]int{1}), "")
+
+}
+func Test33(t *testing.T) {
+
+	a := new([]byte)
+
+	v := reflect.ValueOf(a).Elem()
+
+	v = reflect.Append(v, reflect.ValueOf(byte(1)))
+
+	fmt.Println(*a, v.Interface())
 
 }

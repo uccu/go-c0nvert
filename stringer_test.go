@@ -59,7 +59,7 @@ func TestOtherToString(t *testing.T) {
 }
 
 func TestMoreElemToString(t *testing.T) {
-	var a interface{}
+	var a any
 	var b int = 1
 	a = &b
 	assert.Equal(t, To[string](&a), "")
